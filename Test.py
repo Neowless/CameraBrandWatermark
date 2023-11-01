@@ -1,16 +1,46 @@
 import cv2
 import numpy as np
 
+
 import PIL.Image
 import PIL.ExifTags
 
+import urllib
+import numpy as np
 
-img = PIL.Image.open('TEST.JPG')
+import requests
+
+import io
+
+
+filename = 'TEST.JPG'
+
+img = PIL.Image.open(filename)
 exif = img._getexif()
 
-Coordinate = exif[34853][2][1]
+Coordinate = exif[34853]
 
-print(Coordinate)
+if Coordinate[1] == "N":
+    print("N")
+    Latitude = Coordinate[2][0]+Coordinate[2][1]/60+Coordinate[2][2]/3600
+else:
+    print("S")
+    Latitude = -Coordinate[2][0] + Coordinate[2][1]/60 + Coordinate[2][2] / 3600
+
+if Coordinate[3] == "N":
+    print("N")
+    Longitude = Coordinate[4][0]+Coordinate[4][1]/60+Coordinate[4][2]/3600
+else:
+    print("S")
+    Longitude = -Coordinate[4][0] + Coordinate[4][1] / 60 + Coordinate[4][2] / 3600
+
+    Latitude = float(Latitude)
+    Longitude = float(Longitude)
+
+print(Latitude)
+print(Longitude)
+
+
 
 exif_s = {
     "Make":exif[271],
@@ -31,7 +61,7 @@ print(exif_s)
 
 
 
-image = cv2.imread('TEST4.jpg')
+image = cv2.imread(filename)
 
 imagesize = image.shape
 
