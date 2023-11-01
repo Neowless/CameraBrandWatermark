@@ -9,11 +9,16 @@ import PIL.ExifTags
 import urllib
 import numpy as np
 
+import json
+
 import requests
 
 import io
 
 
+fo = open("../GoogleMapAPIKey/key.txt", "r")
+
+key = fo.read(39)
 
 center = "51.514402,0.008026";
 
@@ -21,10 +26,12 @@ zoom = 15;
 
 size = 400;
 
+
+
 url = "https://maps.googleapis.com/maps/api/staticmap?"
 
 url = (url + "center=" + center + "&zoom=" +
-                   str(zoom) + "&size=" + str(size) + "x" + str(size) + "&format=jpg&key=AIzaSyBsVTSl9_9chsjPDEPd_xziG2V02AfH5II")
+                   str(zoom) + "&size=" + str(size) + "x" + str(size) + "&format=jpg&key="+ key)
 
 
 #response = requests.get(url)
