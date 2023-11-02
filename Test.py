@@ -2,8 +2,8 @@ import cv2
 import numpy as np
 
 
-import PIL.Image
-import PIL.ExifTags
+import TEST_PIL.Image
+import TEST_PIL.ExifTags
 
 import urllib
 import numpy as np
@@ -69,6 +69,8 @@ imagesize = image.shape
 image_x = imagesize[1]
 image_y = imagesize[0]
 
+print(image_x)
+
 '''
 ---------Border1-------
 Border2---IMG---Border3
@@ -100,9 +102,18 @@ Frame = cv2.hconcat([Border_2,image,Border_3])
 
 Frame = cv2.vconcat([Border_1,Frame,Border_4])
 
-
+font = cv2.FONT_HERSHEY_SIMPLEX
+org = (100,5500, )
+font_scale = 20
+color = (0, 0, 0)
+thickness = 40
+line_type = cv2.LINE_AA
+# Put text on the image
+cv2.putText(Frame, 'Hack Projects', org, font, font_scale, color, thickness, line_type)
+# Display the image using OpenCV
 
 cv2.imshow('3 Channel Window', Frame)
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
+

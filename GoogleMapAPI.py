@@ -1,11 +1,6 @@
 import cv2
 import numpy as np
 
-
-
-import PIL.Image
-import PIL.ExifTags
-
 import urllib
 import numpy as np
 
