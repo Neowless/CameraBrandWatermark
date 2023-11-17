@@ -1,0 +1,30 @@
+{
+  "Font": "Smiley Sans",
+  "FontWeight": "Medium",
+  "MaximumBorderRatio": [30,30,30,30],
+  "BorderRatio": [10,10,10,50],
+  "BorderRatioEqual": [10,50],
+  "EqualBorder": true,
+  "BackgroundColour": [255,255,255,255],
+  "TextColour": {
+    "TextColour_1": [0,0,0,255],
+    "TextColour_2": [160,160,160,255],
+    "TextColour_3": [0,0,0,255],
+    "TextColour_4": [160,160,160,255]
+  },
+  "Arrangement": {
+    "Arrangement_Type": 1,
+    "Arrangement_1": [1,3,1,3,2],
+    "Arrangement_2": [1,3,1,3,2],
+    "TextContent_1": "Lens Model",
+    "TextContent_2": "Camera Make and Model",
+    "TextContent_3": "Parameters",
+    "TextContent_4": "Date and Time"
+  },
+  "UserDefinedText": {
+    "Text_1": "Software Developer: Neowless",
+    "Text_2": "Many thanks to SSF for providing sample image",
+    "Text_3": "Appreciate for Xiaomi Inc and all the developer of Smiley Sans for the Font",
+    "Text_4": "Please Subscribe https://space.bilibili.com/130915749"
+  }
+}
