@@ -11,9 +11,11 @@ import os
 import math
 import requests
 import json
+import math
 from MathTool import *
 from ImageProcessingTool import *
 from StrProcessingTool import *
+from rgb_lightness_gain import *
 
 from CoordinateTransform import *
 from GoogleMapAPI import *
@@ -188,6 +190,12 @@ class Stats(QMainWindow):
         self.ui.Latitude_Text.textChanged.connect(self.Change_Exif)
         self.ui.Longitude_Text.textChanged.connect(self.Change_Exif)
         self.ui.CoordinateStr_Text.textChanged.connect(self.Change_Exif)
+        self.ui.Aperture_Text.textChanged.connect(self.Change_Exif)
+        self.ui.ETD_Text.textChanged.connect(self.Change_Exif)
+        self.ui.ETN_Text.textChanged.connect(self.Change_Exif)
+        self.ui.FocalLength_Text.textChanged.connect(self.Change_Exif)
+        self.ui.FocalLength35mm_Text.textChanged.connect(self.Change_Exif)
+        self.ui.ISO_Text.textChanged.connect(self.Change_Exif)
         self.ui.Fetch_Google_Map_Data.clicked.connect(self.Fetch_Google_Map_Data)
         self.ui.Address_Modification.textChanged.connect(self.Change_Exif)
         self.ui.AddressList.currentTextChanged.connect(self.AddressSelection)
@@ -197,6 +205,147 @@ class Stats(QMainWindow):
         self.ui.Border_Ratio_Text.textChanged.connect(self.Border_Ratio_Change)
         self.ui.BorderRatioType.stateChanged.connect(self.Border_Ratio_Equal_Change)
         self.ui.Border_Ratio_Equal_Text.textChanged.connect(self.Border_Ratio_Equal_Change)
+
+        self.ui.Background_Colour_Lightness_Slider.setValue(50)
+        self.ui.Text_Colour_Lightness_Slider_1.setValue(50)
+        self.ui.Text_Colour_Lightness_Slider_2.setValue(50)
+        self.ui.Text_Colour_Lightness_Slider_3.setValue(50)
+        self.ui.Text_Colour_Lightness_Slider_4.setValue(50)
+        self.ui.Background_Colour_Lightness_Slider.valueChanged.connect(self.Background_Colour_Lightness_Slider_Change)
+        self.ui.Text_Colour_Lightness_Slider_1.valueChanged.connect(self.Text_Colour_Lightness_Slider_1_Change)
+        self.ui.Text_Colour_Lightness_Slider_2.valueChanged.connect(self.Text_Colour_Lightness_Slider_2_Change)
+        self.ui.Text_Colour_Lightness_Slider_3.valueChanged.connect(self.Text_Colour_Lightness_Slider_3_Change)
+        self.ui.Text_Colour_Lightness_Slider_4.valueChanged.connect(self.Text_Colour_Lightness_Slider_4_Change)
+        self.ui.Background_Colour_Lightness_SpinBox.setValue(50)
+        self.ui.Text_Colour_Lightness_SpinBox_1.setValue(50)
+        self.ui.Text_Colour_Lightness_SpinBox_2.setValue(50)
+        self.ui.Text_Colour_Lightness_SpinBox_3.setValue(50)
+        self.ui.Text_Colour_Lightness_SpinBox_4.setValue(50)
+        self.ui.Background_Colour_Lightness_SpinBox.valueChanged.connect(self.Background_Colour_Lightness_SpinBox_Change)
+        self.ui.Text_Colour_Lightness_SpinBox_1.valueChanged.connect(self.Text_Colour_Lightness_SpinBox_1_Change)
+        self.ui.Text_Colour_Lightness_SpinBox_2.valueChanged.connect(self.Text_Colour_Lightness_SpinBox_2_Change)
+        self.ui.Text_Colour_Lightness_SpinBox_3.valueChanged.connect(self.Text_Colour_Lightness_SpinBox_3_Change)
+        self.ui.Text_Colour_Lightness_SpinBox_4.valueChanged.connect(self.Text_Colour_Lightness_SpinBox_4_Change)
+
+    def Background_Colour_Lightness_Slider_Change(self):
+        global config, BottomBorderItem, LeftBorderItem, RightBorderItem, TopBorderItem
+        lightness = self.ui.Background_Colour_Lightness_Slider.value()/100
+        [r,g,b,d] = config["BackgroundColour"]
+        newColour = adjust_lightness([r,g,b],lightness)
+        a,b,c = newColour
+        BottomBorderItem.setBrush(QBrush(QColor(a, b, c, d)))
+        LeftBorderItem.setBrush(QBrush(QColor(a, b, c, d)))
+        RightBorderItem.setBrush(QBrush(QColor(a, b, c, d)))
+        TopBorderItem.setBrush(QBrush(QColor(a, b, c, d)))
+        self.ui.Background_Colour_Lightness_SpinBox.valueChanged.disconnect(self.Background_Colour_Lightness_SpinBox_Change)
+        self.ui.Background_Colour_Lightness_SpinBox.setValue(lightness*100)
+        self.ui.Background_Colour_Lightness_SpinBox.valueChanged.connect(self.Background_Colour_Lightness_SpinBox_Change)
+
+    def Text_Colour_Lightness_Slider_1_Change(self):
+        global config, text_item_1
+        lightness = self.ui.Text_Colour_Lightness_Slider_1.value()/100
+        [r,g,b,d] = config["TextColour"]["TextColour_1"]
+        newColour = adjust_lightness([r,g,b],lightness)
+        a,b,c = newColour
+        text_item_1.setDefaultTextColor(QColor(a, b, c, d))
+        self.ui.Text_Colour_Lightness_SpinBox_1.valueChanged.disconnect(self.Text_Colour_Lightness_SpinBox_1_Change)
+        self.ui.Text_Colour_Lightness_SpinBox_1.setValue(lightness*100)
+        self.ui.Text_Colour_Lightness_SpinBox_1.valueChanged.connect(self.Text_Colour_Lightness_SpinBox_1_Change)
+
+    def Text_Colour_Lightness_Slider_2_Change(self):
+        global config, text_item_2
+        lightness = self.ui.Text_Colour_Lightness_Slider_2.value()/100
+        [r,g,b,d] = config["TextColour"]["TextColour_2"]
+        newColour = adjust_lightness([r,g,b],lightness)
+        a,b,c = newColour
+        text_item_2.setDefaultTextColor(QColor(a, b, c, d))
+        self.ui.Text_Colour_Lightness_SpinBox_2.valueChanged.disconnect(self.Text_Colour_Lightness_SpinBox_2_Change)
+        self.ui.Text_Colour_Lightness_SpinBox_2.setValue(lightness*100)
+        self.ui.Text_Colour_Lightness_SpinBox_2.valueChanged.connect(self.Text_Colour_Lightness_SpinBox_2_Change)
+
+
+    def Text_Colour_Lightness_Slider_3_Change(self):
+        global config, text_item_3
+        lightness = self.ui.Text_Colour_Lightness_Slider_3.value()/100
+        [r,g,b,d] = config["TextColour"]["TextColour_3"]
+        newColour = adjust_lightness([r,g,b],lightness)
+        a,b,c = newColour
+        text_item_3.setDefaultTextColor(QColor(a, b, c, d))
+        self.ui.Text_Colour_Lightness_SpinBox_3.valueChanged.disconnect(self.Text_Colour_Lightness_SpinBox_3_Change)
+        self.ui.Text_Colour_Lightness_SpinBox_3.setValue(lightness*100)
+        self.ui.Text_Colour_Lightness_SpinBox_3.valueChanged.connect(self.Text_Colour_Lightness_SpinBox_3_Change)
+
+    def Text_Colour_Lightness_Slider_4_Change(self):
+        global config, text_item_4
+        lightness = self.ui.Text_Colour_Lightness_Slider_4.value()/100
+        [r,g,b,d] = config["TextColour"]["TextColour_4"]
+        newColour = adjust_lightness([r,g,b],lightness)
+        a,b,c = newColour
+        text_item_4.setDefaultTextColor(QColor(a, b, c, d))
+        self.ui.Text_Colour_Lightness_SpinBox_4.valueChanged.disconnect(self.Text_Colour_Lightness_SpinBox_4_Change)
+        self.ui.Text_Colour_Lightness_SpinBox_4.setValue(lightness*100)
+        self.ui.Text_Colour_Lightness_SpinBox_4.valueChanged.connect(self.Text_Colour_Lightness_SpinBox_4_Change)
+
+
+    def Background_Colour_Lightness_SpinBox_Change(self):
+        global config, BottomBorderItem, LeftBorderItem, RightBorderItem, TopBorderItem
+        lightness = self.ui.Background_Colour_Lightness_SpinBox.value()/100
+        [r,g,b,d] = config["BackgroundColour"]
+        newColour = adjust_lightness([r,g,b],lightness)
+        a,b,c = newColour
+        BottomBorderItem.setBrush(QBrush(QColor(a, b, c, d)))
+        LeftBorderItem.setBrush(QBrush(QColor(a, b, c, d)))
+        RightBorderItem.setBrush(QBrush(QColor(a, b, c, d)))
+        TopBorderItem.setBrush(QBrush(QColor(a, b, c, d)))
+        self.ui.Background_Colour_Lightness_Slider.valueChanged.disconnect(self.Background_Colour_Lightness_Slider_Change)
+        self.ui.Background_Colour_Lightness_Slider.setValue(lightness*100)
+        self.ui.Background_Colour_Lightness_Slider.valueChanged.connect(self.Background_Colour_Lightness_Slider_Change)
+
+    def Text_Colour_Lightness_SpinBox_1_Change(self):
+        global config, text_item_1
+        lightness = self.ui.Text_Colour_Lightness_SpinBox_1.value()/100
+        [r,g,b,d] = config["TextColour"]["TextColour_1"]
+        newColour = adjust_lightness([r,g,b],lightness)
+        a,b,c = newColour
+        text_item_1.setDefaultTextColor(QColor(a, b, c, d))
+        self.ui.Text_Colour_Lightness_Slider_1.valueChanged.disconnect(self.Text_Colour_Lightness_Slider_1_Change)
+        self.ui.Text_Colour_Lightness_Slider_1.setValue(lightness*100)
+        self.ui.Text_Colour_Lightness_Slider_1.valueChanged.connect(self.Text_Colour_Lightness_Slider_1_Change)
+
+    def Text_Colour_Lightness_SpinBox_2_Change(self):
+        global config, text_item_2
+        lightness = self.ui.Text_Colour_Lightness_SpinBox_2.value()/100
+        [r,g,b,d] = config["TextColour"]["TextColour_2"]
+        newColour = adjust_lightness([r,g,b],lightness)
+        a,b,c = newColour
+        text_item_2.setDefaultTextColor(QColor(a, b, c, d))
+        self.ui.Text_Colour_Lightness_Slider_2.valueChanged.disconnect(self.Text_Colour_Lightness_Slider_2_Change)
+        self.ui.Text_Colour_Lightness_Slider_2.setValue(lightness*100)
+        self.ui.Text_Colour_Lightness_Slider_2.valueChanged.connect(self.Text_Colour_Lightness_Slider_2_Change)
+
+    def Text_Colour_Lightness_SpinBox_3_Change(self):
+        global config, text_item_3
+        lightness = self.ui.Text_Colour_Lightness_SpinBox_3.value()/100
+        [r,g,b,d] = config["TextColour"]["TextColour_3"]
+        newColour = adjust_lightness([r,g,b],lightness)
+        a,b,c = newColour
+        text_item_3.setDefaultTextColor(QColor(a, b, c, d))
+        self.ui.Text_Colour_Lightness_Slider_3.valueChanged.disconnect(self.Text_Colour_Lightness_Slider_3_Change)
+        self.ui.Text_Colour_Lightness_Slider_3.setValue(lightness*100)
+        self.ui.Text_Colour_Lightness_Slider_3.valueChanged.connect(self.Text_Colour_Lightness_Slider_3_Change)
+
+
+    def Text_Colour_Lightness_SpinBox_4_Change(self):
+        global config, text_item_4
+        lightness = self.ui.Text_Colour_Lightness_SpinBox_4.value()/100
+        [r,g,b,d] = config["TextColour"]["TextColour_4"]
+        newColour = adjust_lightness([r,g,b],lightness)
+        a,b,c = newColour
+        text_item_4.setDefaultTextColor(QColor(a, b, c, d))
+        self.ui.Text_Colour_Lightness_Slider_4.valueChanged.disconnect(self.Text_Colour_Lightness_Slider_4_Change)
+        self.ui.Text_Colour_Lightness_Slider_4.setValue(lightness*100)
+        self.ui.Text_Colour_Lightness_Slider_4.valueChanged.connect(self.Text_Colour_Lightness_Slider_4_Change)
+
 
 
     def UserDefinedTextChange(self):
@@ -213,6 +362,42 @@ class Stats(QMainWindow):
         int_values_list = [int(value) for value in str_values_list]
         config["BackgroundColour"] = int_values_list
         self.ui.Background_Colour.setText(bgColour)
+
+
+    def Background_Colour_Selection_Change(self):
+        bgColour = self.ui.Background_Colour_Selection.currentText()
+        str_values_list = bgColour.split(',')
+        int_values_list = [int(value) for value in str_values_list]
+        config["BackgroundColour"] = int_values_list
+        self.ui.Background_Colour.setText(bgColour)
+
+    def Text_Colour_Selection_1_Change(self):
+        txColour = self.ui.Text_Colour_Selection_1.currentText()
+        str_values_list = txColour.split(',')
+        int_values_list = [int(value) for value in str_values_list]
+        config["TextColour"]["TextColour_1"] = int_values_list
+        self.ui.Text1_Colour.setText(txColour)
+
+    def Text_Colour_Selection_2_Change(self):
+        txColour = self.ui.Text_Colour_Selection_2.currentText()
+        str_values_list = txColour.split(',')
+        int_values_list = [int(value) for value in str_values_list]
+        config["TextColour"]["TextColour_2"] = int_values_list
+        self.ui.Text2_Colour.setText(txColour)
+
+    def Text_Colour_Selection_3_Change(self):
+        txColour = self.ui.Text_Colour_Selection_3.currentText()
+        str_values_list = txColour.split(',')
+        int_values_list = [int(value) for value in str_values_list]
+        config["TextColour"]["TextColour_3"] = int_values_list
+        self.ui.Text3_Colour.setText(txColour)
+
+    def Text_Colour_Selection_4_Change(self):
+        txColour = self.ui.Text_Colour_Selection_4.currentText()
+        str_values_list = txColour.split(',')
+        int_values_list = [int(value) for value in str_values_list]
+        config["TextColour"]["TextColour_4"] = int_values_list
+        self.ui.Text4_Colour.setText(txColour)
 
 
 
@@ -383,6 +568,19 @@ class Stats(QMainWindow):
             exif_s["Elevation"] = float(self.ui.Elevation_Text.text())
         exif_s["CoordinateStr"] = self.ui.CoordinateStr_Text.text()
         exif_s["AddressStr"] = self.ui.Address_Modification.text()
+        if validate_float(self.ui.ISO_Text.text()):
+            exif_s["ISO"] = int(self.ui.ISO_Text.text())
+        if validate_float(self.ui.Aperture_Text.text()):
+            exif_s["Aperture"] = float(self.ui.Aperture_Text.text())
+        if validate_float(self.ui.ETD_Text.text()):
+            exif_s["ExposureTimeDenominator"] = int(self.ui.ETD_Text.text())
+        if validate_float(self.ui.ETN_Text.text()):
+            exif_s["ExposureTimeNumerator"] = float(self.ui.ETN_Text.text())
+        if validate_float(self.ui.FocalLength35mm_Text.text()):
+            exif_s["35mmFocalLength"] = float(self.ui.FocalLength35mm_Text.text())
+        if validate_float(self.ui.FocalLength_Text.text()):
+            exif_s["FocalLength"] = float(self.ui.FocalLength_Text.text())
+
         self.Bottom_Border_Render()
 
     def Change_Font(self):
@@ -426,8 +624,8 @@ class Stats(QMainWindow):
                 "Lens Make and Model": exif_s["LensMake"] + " " + exif_s["LensModel"],
                 "Lens Make": exif_s["LensMake"],
                 "Lens Model": exif_s["LensModel"],
-                "Parameters": str(exif_s["35mmFocalLength"]) + "mm  f/" + str(exif_s["Aperture"]) + "  " +
-                              str(exif_s["ExposureTimeNumerator"]) + "s  ISO" + str(exif_s["ISO"]),
+                "Parameters": float2str_no0(exif_s["35mmFocalLength"]) + "mm  f/" + float2str_no0(exif_s["Aperture"]) + "  " +
+                              float2str_no0(exif_s["ExposureTimeNumerator"]) + "s  ISO" + float2str_no0(exif_s["ISO"]),
                 "Date and Time": exif_s["DateTime"],
                 "Coordinates": "{:.5f}".format(exif_s["Latitude"]) + "," + "{:.5f}".format(exif_s["Longitude"]),
                 "Coordinates (DMS)": exif_s["CoordinateStr"],
@@ -447,9 +645,9 @@ class Stats(QMainWindow):
                 "Lens Make and Model": exif_s["LensMake"] + " " + exif_s["LensModel"],
                 "Lens Make": exif_s["LensMake"],
                 "Lens Model": exif_s["LensModel"],
-                "Parameters": str(exif_s["35mmFocalLength"]) + "mm f/" + str(exif_s["Aperture"]) + " " + \
-                              str(exif_s["ExposureTimeNumerator"]) + "/" +
-                              str(exif_s["ExposureTimeDenominator"]) + "s ISO" + str(exif_s["ISO"]),
+                "Parameters": float2str_no0(exif_s["35mmFocalLength"]) + "mm f/" + float2str_no0(exif_s["Aperture"]) + " " + \
+                              float2str_no0(exif_s["ExposureTimeNumerator"]) + "/" +
+                              float2str_no0(exif_s["ExposureTimeDenominator"]) + "s ISO" + float2str_no0(exif_s["ISO"]),
                 "Date and Time": exif_s["DateTime"],
                 "Coordinates": "{:.5f}".format(exif_s["Latitude"]) + "," + "{:.5f}".format(exif_s["Longitude"]),
                 "Coordinates (DMS)": exif_s["CoordinateStr"],
@@ -512,7 +710,7 @@ class Stats(QMainWindow):
 
 
     def Background_Colour_Change(self):
-        global BottomBorderItem
+        global BottomBorderItem,LeftBorderItem,RightBorderItem,TopBorderItem,config
         colour = self.ui.Background_Colour.text()
         integers = self.validate_string_4int(colour)
         if integers:
@@ -521,6 +719,10 @@ class Stats(QMainWindow):
             LeftBorderItem.setBrush(QBrush(QColor(a, b, c, d)))
             RightBorderItem.setBrush(QBrush(QColor(a, b, c, d)))
             TopBorderItem.setBrush(QBrush(QColor(a, b, c, d)))
+            config["BackgroundColour"] = [a, b, c, d]
+            lightness = rgb_to_hsl(a,b,c)[2]
+            self.ui.Background_Colour_Lightness_Slider.setValue(lightness)
+            self.ui.Background_Colour_Lightness_SpinBox.setValue(lightness)
 
 
     def Change_Text1_Colour(self):
@@ -719,6 +921,11 @@ class Stats(QMainWindow):
         text_item_1.setPlainText(self.Str2ImageData(text1_content))
         text2_content = self.ui.Text2_Content.currentText()
         text_item_2.setPlainText(self.Str2ImageData(text2_content))
+        text3_content = self.ui.Text3_Content.currentText()
+        text_item_3.setPlainText(self.Str2ImageData(text3_content))
+        text4_content = self.ui.Text4_Content.currentText()
+        text_item_4.setPlainText(self.Str2ImageData(text4_content))
+
 
 
 
@@ -796,6 +1003,13 @@ class Stats(QMainWindow):
         self.ui.Longitude_Text.textChanged.disconnect(self.Change_Exif)
         self.ui.CoordinateStr_Text.textChanged.disconnect(self.Change_Exif)
         self.ui.Address_Modification.textChanged.disconnect(self.Change_Exif)
+        self.ui.Aperture_Text.textChanged.disconnect(self.Change_Exif)
+        self.ui.ISO_Text.textChanged.disconnect(self.Change_Exif)
+        self.ui.FocalLength_Text.textChanged.disconnect(self.Change_Exif)
+        self.ui.FocalLength35mm_Text.textChanged.disconnect(self.Change_Exif)
+        self.ui.ETD_Text.textChanged.disconnect(self.Change_Exif)
+        self.ui.ETN_Text.textChanged.disconnect(self.Change_Exif)
+
         self.ui.CameraMake_Text.setText(exif_s["Make"])
         self.ui.CameraModel_Text.setText(exif_s["Model"])
         self.ui.LensMake_Text.setText(exif_s["LensMake"])
@@ -804,6 +1018,12 @@ class Stats(QMainWindow):
         self.ui.Latitude_Text.setText(str(exif_s["Latitude"]))
         self.ui.Longitude_Text.setText(str(exif_s["Longitude"]))
         self.ui.CoordinateStr_Text.setText(exif_s["CoordinateStr"])
+        self.ui.Aperture_Text.setText(float2str_no0(exif_s["Aperture"]))
+        self.ui.ISO_Text.setText(float2str_no0(exif_s["ISO"]))
+        self.ui.FocalLength_Text.setText(float2str_no0(exif_s["FocalLength"]))
+        self.ui.FocalLength35mm_Text.setText(float2str_no0(exif_s["35mmFocalLength"]))
+        self.ui.ETD_Text.setText(float2str_no0(exif_s["ExposureTimeDenominator"]))
+        self.ui.ETN_Text.setText(float2str_no0(exif_s["ExposureTimeNumerator"]))
         self.ui.CameraMake_Text.textChanged.connect(self.Change_Exif)
         self.ui.CameraModel_Text.textChanged.connect(self.Change_Exif)
         self.ui.LensMake_Text.textChanged.connect(self.Change_Exif)
@@ -813,15 +1033,22 @@ class Stats(QMainWindow):
         self.ui.Longitude_Text.textChanged.connect(self.Change_Exif)
         self.ui.CoordinateStr_Text.textChanged.connect(self.Change_Exif)
         self.ui.Address_Modification.textChanged.connect(self.Change_Exif)
+        self.ui.Aperture_Text.textChanged.connect(self.Change_Exif)
+        self.ui.ISO_Text.textChanged.connect(self.Change_Exif)
+        self.ui.FocalLength_Text.textChanged.connect(self.Change_Exif)
+        self.ui.FocalLength35mm_Text.textChanged.connect(self.Change_Exif)
+        self.ui.ETD_Text.textChanged.connect(self.Change_Exif)
+        self.ui.ETN_Text.textChanged.connect(self.Change_Exif)
 
-        colour_list = dominent_colour(image_path, 8, False)
-        for row in colour_list:
+
+
+        bg_colour_list = dominent_colour(image_path, 8, True)
+        for row in bg_colour_list:
             row.append(255)
-        sorted_matrix = sorted(colour_list, key=lambda row: sum(row), reverse=False)
+        sorted_matrix = sorted(bg_colour_list, key=lambda row: sum(row), reverse=False)
         string_list = [','.join(map(str, row)) for row in sorted_matrix]
         self.ui.Background_Colour_Selection.addItems(string_list)
         counter = self.ui.Background_Colour_Selection.count()
-
         for i in range(counter):
             pixmap = QPixmap(20, 20)
             rgba_values = list(map(int, self.ui.Background_Colour_Selection.itemText(i).split(',')))
@@ -831,6 +1058,31 @@ class Stats(QMainWindow):
 
         # Initialize the suggesting colour combo box
         self.ui.Background_Colour_Selection.currentTextChanged.connect(self.Background_Colour_Selection_Change)
+
+        font_colour_list = dominent_colour(image_path, 8, False)
+        for row in font_colour_list:
+            row.append(255)
+        sorted_matrix = sorted(font_colour_list, key=lambda row: sum(row), reverse=True)
+        string_list = [','.join(map(str, row)) for row in sorted_matrix]
+        self.ui.Text_Colour_Selection_1.addItems(string_list)
+        self.ui.Text_Colour_Selection_2.addItems(string_list)
+        self.ui.Text_Colour_Selection_3.addItems(string_list)
+        self.ui.Text_Colour_Selection_4.addItems(string_list)
+        counter = self.ui.Background_Colour_Selection.count()
+        for i in range(counter):
+            pixmap = QPixmap(20, 20)
+            rgba_values = list(map(int, self.ui.Text_Colour_Selection_1.itemText(i).split(',')))
+            qcolor = QColor(*rgba_values)
+            pixmap.fill(qcolor)
+            self.ui.Text_Colour_Selection_1.setItemIcon(i, QIcon(pixmap))
+            self.ui.Text_Colour_Selection_2.setItemIcon(i, QIcon(pixmap))
+            self.ui.Text_Colour_Selection_3.setItemIcon(i, QIcon(pixmap))
+            self.ui.Text_Colour_Selection_4.setItemIcon(i, QIcon(pixmap))
+
+        self.ui.Text_Colour_Selection_1.currentTextChanged.connect(self.Text_Colour_Selection_1_Change)
+        self.ui.Text_Colour_Selection_2.currentTextChanged.connect(self.Text_Colour_Selection_2_Change)
+        self.ui.Text_Colour_Selection_3.currentTextChanged.connect(self.Text_Colour_Selection_3_Change)
+        self.ui.Text_Colour_Selection_4.currentTextChanged.connect(self.Text_Colour_Selection_4_Change)
 
 
 

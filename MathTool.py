@@ -20,6 +20,14 @@ def validate_elevation(string):
     except ValueError:
         return None
 
+def validate_float(string):
+    try:
+        value = float(string)
+        return value
+    except ValueError:
+        return None
+
+
 
 def RGBA2String(list):
     return ','.join(map(str, list))
@@ -105,3 +113,9 @@ def validate_float_string_5(input_string):
         # If the number of elements is not 5, return None
         return None
 
+
+def float2str_no0(value):
+    value = float(value)
+    str = "{:.2f}".format(value)  # Convert to string with two decimal places
+    str = str.rstrip('0').rstrip('.') if '.' in str else str
+    return str
